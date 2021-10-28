@@ -1,0 +1,510 @@
+import vk_api
+import time
+import json
+import sqlite3
+from rasp import rasp_studen
+from parser_html import check_rasp
+
+from random import randint as random
+
+
+from Biba import t
+
+
+vk = vk_api.VkApi(token=t)
+vk._auth_token()
+
+def get_button(label, color, payload=""):
+    return {
+        "action": {
+            "type": "text",
+            "payload": json.dumps(payload),
+            "label": label
+        },
+        "color": color
+    }
+
+def rasp_mine_group (data_select): 
+    if _cache_dict[id][5] == "Корпус 1":
+        b = 1
+    else:
+        b = 2
+    msg = rasp_studen(data_select, b, _cache_dict[id][4])
+    vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+    
+con = sqlite3.connect ("vk_bot.db")
+cur = con.cursor()
+#sql = "INSERT INTO user_data VALUES (1,1,1,1)"
+#cur.execute (sql)
+cur.execute("DELETE FROM user_data WHERE status = 0")
+cur.execute("DELETE FROM user_data WHERE status = 1")
+cur.execute("DELETE FROM user_data WHERE status = 2")
+cur.execute("DELETE FROM user_data WHERE status = 3")
+cur.execute("DELETE FROM user_data WHERE status = 4")
+con.commit()
+cur.execute ("SELECT * FROM user_data")
+p = cur.fetchall()
+
+data = []
+check_rasp()
+cur.execute("SELECT * FROM meta_data_excel")
+check_output = cur.fetchall()
+for i in range (len(check_output)):
+    data.append(str(check_output[i][0]))
+
+kb_data = {
+    "one_time": True,
+    "buttons": []
+}
+but1 = []
+but2 = []
+but = kb_data["buttons"]
+for i in range (len(data)):
+    if len(but1) <= 4:
+        but1.append(get_button(label="{}".format(data[i]), color="primary"))
+        but = [but1]
+    else:
+        but2.append(get_button(label="{}".format(data[i]), color="primary"))
+        but = [but1, but2]
+    kb_data["buttons"] = but
+
+role = ['Преподаватель','Студент']
+building = ['Корпус 1', 'Корпус 2']
+course = ['1', '2', '3', '4']
+group_one_one = ['1Ф8', '1ИС3', '1ИС6', '1ПД7', '1ПД1', '1ПД16', '1Б2', '1ГД11', "12Б10"]
+group_one_two = ['2Ф8', '2ИС3', '2Т1', '2ПД7', '2ООП6', '2ГД11', '2Б2', '23Т10']
+group_one_three = ['3Ф8', '3Б2', '3Т1', '3ПД7', '3ГД11', '3ИС3', '3ООП6', '34Т10']
+group_one_four = ['4ИС3', '4ООП6', '4Т1', '4ПД7', '4ГД11']
+group_two_one = ['1ПСО12', '1ПСО13', '1Р5', '1К4', '12К9', '12ПСО14', '12ПСО15']
+group_two_two = ['2ЛОГ4', '2ПСО12', '2ПСО13', '2Р5', '23К9', '23ПСО14', '23ПСО15']
+group_two_three = ['3Р5', '3ПСО12', '3ПСО13', '3К4']
+group_two_four = ['4ПСО12', '4ПСО13']
+menu_stud = ['Профиль', 'Расписание','Своё расписание', 'Анекдоты']
+menu_prepod = ['Профиль', 'Расписание', 'Анекдоты']
+profile = ['Изменить свой профиль', 'Назад']
+
+kb_role = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=role[0], color="primary")],
+    [get_button(label=role[1], color="primary")]
+    ]}
+kb_building = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=building[0], color="primary")],
+    [get_button(label=building[1], color="primary")]
+    ]}
+kb_course = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=course[0], color="primary"), get_button(label=course[1], color="primary"), get_button(label=course[2], color="primary"), get_button(label=course[3], color="primary")],
+    ]}
+kb_group_one_one = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_one_one[0], color="primary"), get_button(label=group_one_one[1], color="primary"), get_button(label=group_one_one[2], color="primary"), get_button(label=group_one_one[3], color="primary")],
+    [get_button(label=group_one_one[4], color="primary"), get_button(label=group_one_one[5], color="primary"), get_button(label=group_one_one[6], color="primary"), get_button(label=group_one_one[7], color="primary")],
+    [get_button(label=group_one_one[8], color="primary")]
+    ]}
+kb_group_one_two = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_one_two[0], color="primary"), get_button(label=group_one_two[1], color="primary"), get_button(label=group_one_two[2], color="primary"), get_button(label=group_one_two[3], color="primary")],
+    [get_button(label=group_one_two[4], color="primary"), get_button(label=group_one_two[5], color="primary"), get_button(label=group_one_two[6], color="primary"), get_button(label=group_one_two[7], color="primary")]
+    ]}
+kb_group_one_three = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_one_three[0], color="primary"), get_button(label=group_one_three[1], color="primary"), get_button(label=group_one_three[2], color="primary"), get_button(label=group_one_three[3], color="primary")],
+    [get_button(label=group_one_three[4], color="primary"), get_button(label=group_one_three[5], color="primary"), get_button(label=group_one_three[6], color="primary"), get_button(label=group_one_three[7], color="primary")]
+    ]}
+kb_group_one_four = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_one_four[0], color="primary"), get_button(label=group_one_four[1], color="primary"), get_button(label=group_one_four[2], color="primary"), get_button(label=group_one_four[3], color="primary")],
+    [get_button(label=group_one_four[4], color="primary")]
+    ]}
+kb_group_two_one = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_two_one[0], color="primary"), get_button(label=group_two_one[1], color="primary"), get_button(label=group_two_one[2], color="primary"), get_button(label=group_two_one[3], color="primary")],
+    [get_button(label=group_two_one[4], color="primary"), get_button(label=group_two_one[5], color="primary"), get_button(label=group_two_one[6], color="primary")]
+    ]}
+kb_group_two_two = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_two_two[0], color="primary"), get_button(label=group_two_two[1], color="primary"), get_button(label=group_two_two[2], color="primary"), get_button(label=group_two_two[3], color="primary")],
+    [get_button(label=group_two_two[4], color="primary"), get_button(label=group_two_two[5], color="primary"), get_button(label=group_two_two[6], color="primary")]
+    ]}
+kb_group_two_three = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_two_three[0], color="primary"), get_button(label=group_two_three[1], color="primary"), get_button(label=group_two_three[2], color="primary"), get_button(label=group_two_three[3], color="primary")]
+    ]}
+kb_group_two_four = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=group_two_four[0], color="primary"), get_button(label=group_two_four[1], color="primary")]
+    ]}
+kb_menu_stud = {
+    "one_time": False,
+    "buttons": [
+    [get_button(label=menu_stud[0], color="primary"), get_button(label=menu_stud[3], color="primary")],
+    [get_button(label=menu_stud[1], color="primary"), get_button(label=menu_stud[2], color="primary")]
+    ]}
+kb_menu_prepod = {
+    "one_time": False,
+    "buttons": [
+    [get_button(label=menu_prepod[0], color="primary"), get_button(label=menu_prepod[2], color="primary"), get_button(label=menu_prepod[1], color="primary")]
+    ]}
+kb_profile = {
+    "one_time": True,
+    "buttons": [
+    [get_button(label=profile[0], color="primary"), get_button(label=profile[1], color="primary")]
+    ]}
+
+kb_role = str(json.dumps(kb_role, ensure_ascii=False))
+kb_course = str(json.dumps(kb_course, ensure_ascii=False))
+kb_building = str(json.dumps(kb_building, ensure_ascii=False))
+kb_group_one_one = str(json.dumps(kb_group_one_one, ensure_ascii=False))
+kb_group_one_two = str(json.dumps(kb_group_one_two, ensure_ascii=False))
+kb_group_one_three = str(json.dumps(kb_group_one_three, ensure_ascii=False))
+kb_group_one_four = str(json.dumps(kb_group_one_four, ensure_ascii=False))
+kb_group_two_one = str(json.dumps(kb_group_two_one, ensure_ascii=False))
+kb_group_two_two = str(json.dumps(kb_group_two_two, ensure_ascii=False))
+kb_group_two_three = str(json.dumps(kb_group_two_three, ensure_ascii=False))
+kb_group_two_four = str(json.dumps(kb_group_two_four, ensure_ascii=False))
+kb_menu_stud = str(json.dumps(kb_menu_stud, ensure_ascii=False))
+kb_menu_prepod = str(json.dumps(kb_menu_prepod, ensure_ascii=False))
+kb_data = str(json.dumps(kb_data, ensure_ascii=False))
+kb_profile = str(json.dumps(kb_profile, ensure_ascii=False))
+
+_cache_dict = {} 
+#[id, role, name, status, group, building]
+#   //status auth//
+# -1 - new user
+# 0 - role
+# 1 - building
+# 2 - course
+# 3 - group
+# 4 - isnert bd
+# 5 - auth
+#   //role//
+# 0 - prepod
+# 1 - student
+
+
+
+
+text_list = []
+i = 0
+data_select = 0
+course_select = 0
+rasp_building = 0
+rasp_group = 0
+profile_select = 0
+while True:
+    try:   
+        message = vk.method("messages.getConversations", {"offset": 0, "count": 1,"filter": "unanswered"})
+        id = message["items"][0]["last_message"]["from_id"]
+        text = message["items"][0]["last_message"]["text"]
+        info = vk.method("users.get", {"user_ids": id})
+        first_name = info[0]['first_name']
+        last_name = info[0]['last_name']
+        name = first_name + " " + last_name
+
+        while i < 1:
+            try:
+                cur.execute ("SELECT * FROM user_data WHERE id = {}".format(id))
+                user = cur.fetchall()
+                dan = user[0]
+                us_id = dan [0]
+                us_role = dan [1]
+                us_name = dan [2]
+                us_status = dan [3]
+                us_group = dan [4]
+                us_building = dan [5]
+                _cache_dict = {int("{}".format(id)):[us_id, us_role, us_name, us_status, us_group, us_building]}
+                #print(_cache_dict)
+                i += 1
+            except:
+                i += 1
+        if id not in _cache_dict:
+            _cache_dict[id] = [id,0,"",-1,"",""] #[id, role, name, status, group, building]
+            _cache_dict[id][2] = name
+        print(id, text)
+        if "Расписание" in text_list:
+            if text not in data:
+                msg = "Выберите дату"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_data})
+            else:
+                data_select = text
+                text_list.clear()
+                text_list.append(text)
+        elif "Своё расписание" in text_list:
+            if text not in data:
+                msg = "Выберите дату"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_data})
+            else:
+                rasp_mine_group(text)
+        elif "Анекдоты" in text_list:
+            cur.execute ("SELECT * FROM aneki")
+            p = cur.fetchall()
+            i1 = 0
+            i = random (0, (len(p)-1))
+            msg = ""
+            while i1 < len(p[i]):
+                anek_str = p[i][i1]
+                if anek_str == "":
+                    i1 += 1 
+                else:
+                    msg = msg + "{}\n".format(anek_str)
+                    i1 += 1
+            vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+            text_list.clear()
+        elif "Профиль" in text_list:
+            if text not in profile:
+                if _cache_dict[id][1] == 1:
+                    r = "Студент"
+                else:
+                    r = "Преподаватель"
+                status = "Авторизованный"
+                msg = "Ваш профиль\n{}\nВаша роль: {} {} {}\n{}\n".format(_cache_dict[id][2],r,_cache_dict[id][4],_cache_dict[id][5],status)
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_profile})
+            else:
+                profile_select = text
+                text_list.clear()
+                text_list.append(text)
+        elif profile_select in text_list:
+            if profile_select == "Изменить свой профиль":
+                _cache_dict[id] = [id,0,"",-1,"",""]
+                _cache_dict[id][2] = name
+                text_list.clear()
+                cur.execute("DELETE FROM user_data WHERE id = {}".format(id))
+            else:
+                text_list.clear()
+        elif data_select in text_list:
+            if text not in building:
+                msg = "Выберите нужный корпус"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_building})
+            else:
+                rasp_building = text
+                text_list.clear() 
+                text_list.append(text)
+        elif rasp_building in text_list:
+            if text not in course:
+                msg = "Выберите нужный курс"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_course})
+            else:
+                course_select = text
+                text_list.clear() 
+                text_list.append(text)
+        elif course_select in text_list:
+            if rasp_building == "Корпус 1":
+                if course_select == "1":
+                    if text not in group_one_one:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_one})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "2":
+                    if text not in group_one_two:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_two})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "3":
+                    if text not in group_one_three:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_three})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "4":
+                    if text not in group_one_four:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_four})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+            else:
+                if course_select == "1":
+                    if text not in group_two_one:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_one})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "2":
+                    if text not in group_two_two:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_two})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "3":
+                    if text not in group_two_three:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_three})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+                elif course_select == "4":
+                    if text not in group_two_four:
+                        msg = "Выберите нужную группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_four})
+                    else:
+                        rasp_group = text
+                        text_list.clear() 
+                        text_list.append(text)
+        elif rasp_group in text_list:
+            if rasp_building == "Корпус 1":
+                b = 1
+            else:
+                b = 2
+            msg = rasp_studen(data_select, b, rasp_group)
+            vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+            text_list.clear()
+        if _cache_dict[id][3] == -1: #-1 - role
+            if text not in role:
+                msg = "Здравствуйте, для начала необходимо пройти небольшую регистрацию, выберите вашу роль, нажав кнопку"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_role})
+            else:
+                if text == "Преподаватель":
+                    _cache_dict[id][3] = 4
+                    _cache_dict[id][1] = 0
+                else:
+                    _cache_dict[id][3] = 1
+                    _cache_dict[id][1] = 1
+        elif _cache_dict[id][3] == 1: #1 - building
+            if text not in building:
+                msg = "Выберите ваш корпус"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_building})
+            else:
+                    _cache_dict[id][5] = text
+                    _cache_dict[id][3] = 2
+        elif _cache_dict[id][3] == 2: #2 - course
+            if text not in course:
+                msg = "Выберите ваш курс"
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_course})
+            else:
+                course_select = text
+                _cache_dict[id][3] = 3
+        elif _cache_dict [id][3] == 3: #3 - group
+            if _cache_dict[id][5] == "Корпус 1":
+                if course_select == "1":
+                    if text not in group_one_one:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_one})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "2":
+                    if text not in group_one_two:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_two})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "3":
+                    if text not in group_one_three:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_three})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "4":
+                    if text not in group_one_four:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_one_four})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+            else:
+                if course_select == "1":
+                    if text not in group_two_one:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_one})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "2":
+                    if text not in group_two_two:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_two})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "3":
+                    if text not in group_two_three:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_three})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+                elif course_select == "4":
+                    if text not in group_two_four:
+                        msg = "Выберите вашу группу"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_group_two_four})
+                    else:
+                        _cache_dict[id][4] = text
+                        _cache_dict[id][3] = 4
+        elif _cache_dict[id][3] == 4: #запись в бд
+            msg = "Записываю ваши данные..."
+            if _cache_dict[id][1] == 1:
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_menu_stud})
+            else:
+                vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_menu_prepod})
+            user_info ={"{}".format(id):_cache_dict[id]}
+            user_id = str(id)
+            a = user_info[user_id]
+            _cache_dict[id][3] = 5
+            cur.execute("INSERT INTO user_data VALUES (?,?,?,?,?,?)", a)
+            con.commit()        
+        elif _cache_dict[id][3] == 5:
+            if text not in text_list:
+                if _cache_dict[id][1] == 1:
+                    if text not in menu_stud:
+                        msg = "говно с грибами"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_menu_stud})
+                    else:
+                        if text == "Профиль":
+                            text_list.clear()
+                            text_list.append(text)
+                        elif text == "Своё расписание":
+                            text_list.clear()
+                            text_list.append(text) 
+                        elif text == "Расписание":
+                            text_list.clear()
+                            text_list.append(text)
+                        elif text == "Анекдоты":
+                            text_list.clear()
+                            text_list.append(text)
+                else:
+                    if text not in menu_prepod:
+                        msg = "говно с грибами"
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg, "keyboard": kb_menu_prepod})
+                    else:
+                        if text == "Профиль":
+                            text_list.clear()
+                            text_list.append(text)
+                        elif text == "Расписание":
+                            text_list.clear()
+                            text_list.append(text)
+                        elif text == "Анекдоты":
+                            text_list.clear()
+                            text_list.append(text)
+            else:
+                pass
+    except:
+        time.sleep(1)
