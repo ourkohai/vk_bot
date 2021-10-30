@@ -4,6 +4,7 @@ import json
 import sqlite3
 from rasp import rasp_studen, rasp_prepod
 from parser_html import check_rasp
+from translate import Translator
 
 from random import randint as random
 
@@ -231,15 +232,13 @@ raspis_switch = 0
 main_raspis_switch = 0
 profile_switch = 0
 raspis_prepod_switch = 0
+anek_list = []
+
 while True:
     try:  
         message = vk.method("messages.getConversations", {"offset": 0, "count": 1,"filter": "unanswered"})
         id = message["items"][0]["last_message"]["from_id"]
         text = message["items"][0]["last_message"]["text"]
-        info = vk.method("users.get", {"user_ids": id})
-        first_name = info[0]['first_name']
-        last_name = info[0]['last_name']
-        name = first_name + " " + last_name
         i = 0
         while i < 1:
             try:
@@ -260,6 +259,12 @@ while True:
         
         if id not in _cache_dict:
                 _cache_dict[id] = [id,0,"",-1,"","", 0] #[id, role, name, status, group, building, admin]
+                info = vk.method("users.get", {"user_ids": id})
+                first_name = info[0]['first_name']
+                last_name = info[0]['last_name']
+                name = first_name + " " + last_name
+                translator = Translator(to_lang="Russian")
+                name = translator.translate(name)
                 _cache_dict[id][2] = name
         print(id, text)
         if raspis_switch == 1:
@@ -472,10 +477,18 @@ while True:
                         text_list.clear()
                         text_list.append(text)
                     elif text == "Анекдоты":
+                        perebor = 0
                         cur.execute ("SELECT * FROM aneki")
                         p = cur.fetchall()
                         i1 = 0
                         i = random (0, (len(p)-1))
+                        while i in anek_list:
+                            i = random (0, (len(p)-1))
+                            perebor += 1
+                        if perebor > 15:
+                            anek_list.clear()
+                        else:
+                            anek_list.append(i)
                         msg = ""
                         while i1 < len(p[i]):
                             anek_str = p[i][i1]
@@ -499,10 +512,18 @@ while True:
                         text_list.clear()
                         text_list.append(text)
                     elif text == "Анекдоты":
+                        perebor = 0
                         cur.execute ("SELECT * FROM aneki")
                         p = cur.fetchall()
                         i1 = 0
                         i = random (0, (len(p)-1))
+                        while i in anek_list:
+                            i = random (0, (len(p)-1))
+                            perebor += 1
+                        if perebor > 15:
+                            anek_list.clear()
+                        else:
+                            anek_list.append(i)
                         msg = ""
                         while i1 < len(p[i]):
                             anek_str = p[i][i1]
