@@ -22,8 +22,11 @@ def rasp_prepod(data, name):
     raspis = parser_excel_prepod(data, name)
     rasp_list = []
     for i in raspis:
-        a = str(i[0]) + " | " + str(i[1]) + " | " + str(i[2]) + " | " + str(i[3])
-        rasp_list.append(a)
+        if "nan" not in str(i):
+            a = str(i[0]) + " | " + str(i[1]) + " | " + str(i[2]) + " | " + str(i[3])
+            rasp_list.append(a)
+        else:
+            pass
     i = 0
     msg = ""
     while i < len(rasp_list):
