@@ -465,81 +465,81 @@ while True:
                 else:
                     profile_switch = 0
                     text_list.clear()
-        elif _cache_dict[id][3] == 5:
-            if _cache_dict[id][6] == 1:
-                if _cache_dict[id][1] == 1:
-                    if text not in menu_admin_stud:
-                        msg = "говно с грибами"
-                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100), "message": msg, "keyboard": kb_menu_admin_stud})
-                    else:
-                        if text == "Профиль":
-                            profile_switch = 1
-                            text_list.clear()
-                            text_list.append(text)
-                        elif text == "Своё расписание":
-                            main_raspis_switch = 1
-                            text_list.clear()
-                            text_list.append(text) 
-                        elif text == "Расписание":
-                            raspis_menu_switch = 1
-                            text_list.clear()
-                        elif text == "Анекдоты":
-                            perebor = 0
-                            cur.execute ("SELECT * FROM aneki")
-                            p = cur.fetchall()
-                            i1 = 0
-                            i = random (0, (len(p)-1))
-                            while i in anek_list:
-                                i = random (0, (len(p)-1))
-                                perebor += 1
-                            if perebor > 12:
-                                anek_list.clear()
-                            else:
-                                anek_list.append(i)
-                            msg = ""
-                            while i1 < len(p[i]):
-                                anek_str = p[i][i1]
-                                if anek_str == "":
-                                    i1 += 1 
-                                else:
-                                    msg = msg + "{}\n".format(anek_str)
-                                    i1 += 1
-                            vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+        elif _cache_dict[id][6] == 1:
+            if _cache_dict[id][1] == 1:
+                if text not in menu_admin_stud:
+                    msg = "говно с грибами"
+                    vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100), "message": msg, "keyboard": kb_menu_admin_stud})
                 else:
-                    if text not in menu_admin_prepod:
-                        msg = "говно с грибами"
-                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100), "message": msg, "keyboard": kb_menu_admin_prepod})
-                    else:
-                        if text == "Профиль":
-                            profile_switch = 1
-                            text_list.clear()
-                            text_list.append(text)
-                        elif text == "Расписание":
-                            raspis_menu_switch = 1
-                            text_list.clear()
-                        elif text == "Анекдоты":
-                            perebor = 0
-                            cur.execute ("SELECT * FROM aneki")
-                            p = cur.fetchall()
-                            i1 = 0
+                    if text == "Профиль":
+                        profile_switch = 1
+                        text_list.clear()
+                        text_list.append(text)
+                    elif text == "Своё расписание":
+                        main_raspis_switch = 1
+                        text_list.clear()
+                        text_list.append(text) 
+                    elif text == "Расписание":
+                        raspis_menu_switch = 1
+                        text_list.clear()
+                    elif text == "Анекдоты":
+                        perebor = 0
+                        cur.execute ("SELECT * FROM aneki")
+                        p = cur.fetchall()
+                        i1 = 0
+                        i = random (0, (len(p)-1))
+                        while i in anek_list:
                             i = random (0, (len(p)-1))
-                            while i in anek_list:
-                                i = random (0, (len(p)-1))
-                                perebor += 1
-                            if perebor > 12:
-                                anek_list.clear()
+                            perebor += 1
+                        if perebor > 12:
+                            anek_list.clear()
+                        else:
+                            anek_list.append(i)
+                        msg = ""
+                        while i1 < len(p[i]):
+                            anek_str = p[i][i1]
+                            if anek_str == "":
+                                i1 += 1 
                             else:
-                                anek_list.append(i)
-                            msg = ""
-                            while i1 < len(p[i]):
-                                anek_str = p[i][i1]
-                                if anek_str == "":
-                                    i1 += 1 
-                                else:
-                                    msg = msg + "{}\n".format(anek_str)
-                                    i1 += 1
-                            vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+                                msg = msg + "{}\n".format(anek_str)
+                                i1 += 1
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
             else:
+                if text not in menu_admin_prepod:
+                    msg = "говно с грибами"
+                    vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100), "message": msg, "keyboard": kb_menu_admin_prepod})
+                else:
+                    if text == "Профиль":
+                        profile_switch = 1
+                        text_list.clear()
+                        text_list.append(text)
+                    elif text == "Расписание":
+                        raspis_menu_switch = 1
+                        text_list.clear()
+                    elif text == "Анекдоты":
+                        perebor = 0
+                        cur.execute ("SELECT * FROM aneki")
+                        p = cur.fetchall()
+                        i1 = 0
+                        i = random (0, (len(p)-1))
+                        while i in anek_list:
+                            i = random (0, (len(p)-1))
+                            perebor += 1
+                        if perebor > 12:
+                            anek_list.clear()
+                        else:
+                            anek_list.append(i)
+                        msg = ""
+                        while i1 < len(p[i]):
+                            anek_str = p[i][i1]
+                            if anek_str == "":
+                                i1 += 1 
+                            else:
+                                msg = msg + "{}\n".format(anek_str)
+                                i1 += 1
+                        vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
+        elif _cache_dict[id][3] == 5:
+            if _cache_dict[id][6] == 0:
                 if _cache_dict[id][1] == 1:
                     if text not in menu_stud:
                         msg = "Главное меню"
@@ -568,6 +568,8 @@ while True:
                         elif text == "Расписание":
                             raspis_menu_switch = 1
                             text_list.clear()
+            else:
+                pass
         if _cache_dict[id][3] == -1: #-1 - role
             if text not in role:
                 msg = "Здравствуйте, для начала необходимо пройти небольшую регистрацию, выберите вашу роль, нажав кнопку"
@@ -673,5 +675,6 @@ while True:
             _cache_dict[id][3] = 5
             cur.execute("INSERT INTO user_data VALUES (?,?,?,?,?,?,?)", a)
             con.commit()        
+        
     except:
         time.sleep(1)
