@@ -15,6 +15,7 @@ vk = vk_api.VkApi(token=t)
 vk._auth_token()
 
 def get_button(label, color, payload=""):
+    '''Creates buttons on the vk keyboard'''
     return {
         "action": {
             "type": "text",
@@ -24,7 +25,8 @@ def get_button(label, color, payload=""):
         "color": color
     }
 
-def rasp_mine_group (data_select): 
+def rasp_mine_group (data_select):
+    '''Sends a message with the group schedule from the user profile'''
     if _cache_dict[id][5] == "Корпус 1":
         b = 1
     else:

@@ -67,7 +67,7 @@ def parser_excel_prepod(data, name):
                 a = i.index(j)
                 b = _list_two.index(i)
                 b = b-b%9
-                _prepod.append ([_list_two[b][a-1],i[a-1],i[a],i[a+1]])
+                _prepod.append([_list_two[b][a-1],i[a-1],i[a],i[a+1]])
     for i in _list_one:
         for j in i:
             if name in str(j):
