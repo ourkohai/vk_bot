@@ -2,11 +2,12 @@ import vk_api
 import time
 import json
 import sqlite3
-
 from rasp import rasp_studen, rasp_prepod
 from parser_html import check_rasp
 from translate import Translator
+
 from random import randint as random
+
 
 from Biba import t
 
@@ -43,6 +44,14 @@ def rasp_mine_group (data_select):
     
 con = sqlite3.connect ("vk_bot.db")
 cur = con.cursor()
+#sql = "INSERT INTO user_data VALUES (1,1,1,1)"
+#cur.execute (sql)
+cur.execute("DELETE FROM user_data WHERE status = 0")
+cur.execute("DELETE FROM user_data WHERE status = 1")
+cur.execute("DELETE FROM user_data WHERE status = 2")
+cur.execute("DELETE FROM user_data WHERE status = 3")
+cur.execute("DELETE FROM user_data WHERE status = 4")
+con.commit()
 cur.execute ("SELECT * FROM user_data")
 p = cur.fetchall()
 
@@ -238,12 +247,24 @@ while True:
         message = vk.method("messages.getConversations", {"offset": 0, "count": 1,"filter": "unanswered"})
         id = message["items"][0]["last_message"]["from_id"]
         text = message["items"][0]["last_message"]["text"]
-        try:
-            cur.execute ("SELECT * FROM user_data WHERE id = {}".format(id))
-            user = cur.fetchall()[0]
-            _cache_dict = {int("{}".format(id)):[user[0], user[1], user[2], user[3], user[4], user[5], user[6]]}
-        except:
-            pass
+        i = 0
+        while i < 1:
+            try:
+                cur.execute ("SELECT * FROM user_data WHERE id = {}".format(id))
+                user = cur.fetchall()
+                dan = user[0]
+                us_id = dan [0]
+                us_role = dan [1]
+                us_name = dan [2]
+                us_status = dan [3]
+                us_group = dan [4]
+                us_building = dan [5]
+                us_admin = dan [6]
+                _cache_dict = {int("{}".format(id)):[us_id, us_role, us_name, us_status, us_group, us_building, us_admin]}
+                i += 1
+            except:
+                i += 1
+        
         if id not in _cache_dict:
                 _cache_dict[id] = [id,0,"",-1,"","", 0] #[id, role, name, status, group, building, admin]
                 info = vk.method("users.get", {"user_ids": id})
@@ -253,7 +274,7 @@ while True:
                 translator = Translator(to_lang="Russian")
                 name = translator.translate(name)
                 _cache_dict[id][2] = name
-        print(_cache_dict[id][2], "|", text)
+        print(id, text)
         if raspis_menu_switch == 1:
                 if text not in raspis_menu:
                     msg = "Выберите тип расписания"
@@ -392,7 +413,7 @@ while True:
                         text_list.append(data_select_prepod)
                 elif data_select_prepod in text_list:
                     if text in text_list:
-                        msg = "Введите фамилию преподавателя"
+                        msg = "Введите имя преподавателя"
                         vk.method("messages.send", {"peer_id": id, "random_id": random(-100, 100),"message": msg})
                     else:
                         name = text.capitalize()
@@ -491,7 +512,7 @@ while True:
                         while i in anek_list:
                             i = random (0, (len(p)-1))
                             perebor += 1
-                        if perebor > 12:
+                        if perebor > 15:
                             anek_list.clear()
                         else:
                             anek_list.append(i)
@@ -525,7 +546,7 @@ while True:
                         while i in anek_list:
                             i = random (0, (len(p)-1))
                             perebor += 1
-                        if perebor > 12:
+                        if perebor > 15:
                             anek_list.clear()
                         else:
                             anek_list.append(i)
