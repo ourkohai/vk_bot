@@ -1,8 +1,8 @@
+from bs4 import BeautifulSoup #pip install lxml
 import requests as req
 import sqlite3
 import os
 
-from bs4 import BeautifulSoup #pip install lxml
 from requests.sessions import Request
 
 
@@ -19,9 +19,14 @@ def parser_html():
         rasp.append(rasp_old[i])
         i = i+1
         rasp.append(rasp_old[i])
-        i = i+4       
+        i = i+4
+    #i = 0
+    #for i in range(len(rasp)):
+    #   print(rasp[i])
+        
     name = []
     data = []
+
     for i in range(len(rasp)): #словарь название:дата
         if i%2 != 0:
             rs = str(rasp[i])[18:34]
@@ -42,8 +47,8 @@ p = cur.fetchall()
 def check_rasp():
     site_parse = parser_html()
     cur.execute ("SELECT * FROM meta_data_excel")
-    meta_data_excel = cur.fetchall()
-    meta_data = list(site_parse.items())
+    meta_data_excel = cur.fetchall() # [('25-10', '2021-10-22 17:22'), ('26-10', '2021-10-25 12:05')]      | bd 
+    meta_data = list(site_parse.items()) # [('25-10', '2021-10-22 17:22'), ('26-10', '2021-10-25 12:05')]   | parser
     if len(meta_data_excel) == len(meta_data): #если скач = дост  |   проверка актуальности
         for i in range(len(meta_data)):
             name_bd = meta_data_excel[i][0]
@@ -61,38 +66,38 @@ def check_rasp():
                     outfile.write(r.content)
     elif len(meta_data_excel) > len(meta_data): #если скач > дост |   проверка актуальности, удаление старых файлов
         for i in range(len(meta_data_excel)):
-            try:
+            try: #  проверяет скачанные файлы на актуальность
                 name_bd = meta_data_excel[i][0]
                 data_bd = meta_data_excel[i][1]
-                if site_parse[name_bd] == data_bd:
+                if site_parse[name_bd] == data_bd: #проверка актуальности
                     pass
                 else:
-                    cur.execute("UPDATE meta_data_excel SET data = '{}' WHERE name = '{}'".format(site_parse[name_bd], name_bd))
+                    cur.execute("UPDATE meta_data_excel SET data = '{}' WHERE name = '{}'".format(site_parse[name_bd], name_bd)) #обновлям данные в бд
                     con.commit()
-                    file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0])
+                    file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0]) #удаляем старый файл
                     os.remove(file_path)
-                    url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0])
+                    url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0]) #скачиваем новый
                     r = req.get(url)
                     with open('{}.xlsx'.format(meta_data[i][0]), 'wb') as outfile:
                         outfile.write(r.content)
             except: # старые файлы
                 cur.execute("DELETE FROM meta_data_excel WHERE name = '{}'".format(name_bd))
                 con.commit()
-                file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0])
+                file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0]) #удаляем старый файл
                 os.remove(file_path)
     elif len(meta_data_excel) < len(meta_data): #если скач < дост |   проверка актуальности, скачивание новых файлов
         for i in range(len(meta_data)):
-            try:
+            try: #  проверяет скачанные файлы на актуальность
                 name_bd = meta_data_excel[i][0]
                 data_bd = meta_data_excel[i][1]
-                if site_parse[name_bd] == data_bd:
+                if site_parse[name_bd] == data_bd: #проверка актуальности
                     pass
                 else:
-                    cur.execute("UPDATE meta_data_excel SET data = {} WHERE name = '{}'".format(site_parse[name_bd], name_bd))
+                    cur.execute("UPDATE meta_data_excel SET data = {} WHERE name = '{}'".format(site_parse[name_bd], name_bd)) #обновлям данные в бд
                     con.commit()
-                    file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0])
+                    file_path = path + "\\{}.xlsx".format(meta_data_excel[i][0]) #удаляем старый файл
                     os.remove(file_path)
-                    url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0])
+                    url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0]) #скачиваем новый
                     r = req.get(url)
                     with open('{}.xlsx'.format(meta_data[i][0]), 'wb') as outfile:
                         outfile.write(r.content)
@@ -102,7 +107,7 @@ def check_rasp():
                 file_info.append(meta_data[i][1])
                 cur.execute("INSERT INTO meta_data_excel VALUES(?,?)", file_info)
                 con.commit()
-                url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0])
+                url = "https://a.nttek.ru/xlsx/{}.xlsx".format(meta_data[i][0]) #скачиваем новый
                 r = req.get(url)
                 with open('{}.xlsx'.format(meta_data[i][0]), 'wb') as outfile:
                     outfile.write(r.content)

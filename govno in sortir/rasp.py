@@ -1,6 +1,5 @@
 from parser_excel import parser_excel, parser_excel_prepod
-def rasp_studen(data, b, group):
-    '''Creates a message with a group schedule'''
+def rasp_studen (data, b, group):
     raspis = parser_excel(data, b, group)
     rasp_list = []
     for i in raspis:
@@ -20,7 +19,6 @@ def rasp_studen(data, b, group):
     return msg
 
 def rasp_prepod(data, name):
-    '''Creates a message with a schedule for teachers'''
     raspis = parser_excel_prepod(data, name)
     rasp_list = []
     for i in raspis:
